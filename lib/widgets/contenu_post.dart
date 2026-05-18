@@ -14,10 +14,13 @@ class ContenuPost extends StatelessWidget {
         MemberHeader(memberId: post.member, date: post.date),
         const SizedBox(height: 8),
         if (post.imageUrl.isNotEmpty)
-          Image.network(
-            post.imageUrl,
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.cover,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              post.imageUrl,
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
+            ),
           )
         else
           Container(),

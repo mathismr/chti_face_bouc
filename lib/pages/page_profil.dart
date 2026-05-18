@@ -33,6 +33,7 @@ class _PageProfilState extends State<PageProfil> {
             ServiceAuthentification().isMe(widget.member.id);
         final indexToAdd = (isMe) ? 2 : 1;
         return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: length + indexToAdd,
           itemBuilder: (context, index) {
             if (index == 0) {
@@ -108,7 +109,7 @@ class _PageProfilState extends State<PageProfil> {
             }
             if (isMe && index == 1) {
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 40),
                 child: OutlinedButton(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -129,8 +130,9 @@ class _PageProfilState extends State<PageProfil> {
               id: current.id,
               map: current.data() as Map<String, dynamic>,
             );
-            return WidgetPost(
-              post: post,
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: WidgetPost(post: post),
             );
           },
         );
