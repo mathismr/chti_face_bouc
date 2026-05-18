@@ -13,6 +13,11 @@ class ContenuPost extends StatelessWidget {
       children: [
         MemberHeader(memberId: post.member, date: post.date),
         const SizedBox(height: 8),
+        if (post.text.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(post.text),
+          ),
         if (post.imageUrl.isNotEmpty)
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
@@ -24,11 +29,6 @@ class ContenuPost extends StatelessWidget {
           )
         else
           Container(),
-        if (post.text.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text(post.text),
-          ),
       ],
     );
   }
