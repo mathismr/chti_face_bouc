@@ -142,5 +142,3 @@ Pour utiliser la camera et la galerie photo sur iOS, les permissions suivantes s
 ## Auteur
 
 Projet realise dans le cadre du module **"Developpement d'une application mobile"** a **IMT Nord Europe**.
-
-Sujet par **Didier JUGE-HUBERT** - Version 1.2/2026
