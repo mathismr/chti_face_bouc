@@ -56,6 +56,9 @@ class _PageModifierProfilState extends State<PageModifierProfil> {
     }
 
     ServiceFirestore().updateMember(id: member.id, data: map);
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -134,6 +137,46 @@ class _PageModifierProfilState extends State<PageModifierProfil> {
                   foregroundColor: Colors.white,
                 ),
                 child: const Text("Se deconnecter"),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  final result = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Supprimer le compte"),
+                      content: const Text(
+                          "Cette action est irréversible. Voulez-vous vraiment supprimer votre compte ?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(context, false),
+                          child: const Text("NON"),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(context, true),
+                          child: const Text("OUI"),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (result == true) {
+                    final memberId = ServiceAuthentification().myId;
+                    final authDeleted = await ServiceAuthentification().deleteAccount();
+                    if (authDeleted && memberId != null) {
+                      await ServiceFirestore().deleteMember(id: memberId);
+                    }
+                    if (context.mounted) {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade900,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text("Supprimer mon compte"),
               ),
             ],
           ),

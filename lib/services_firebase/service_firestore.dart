@@ -25,6 +25,18 @@ class ServiceFirestore {
     firestoreMember.doc(id).update(data);
   }
 
+  // Supprimer un membre et ses sous-collections
+  deleteMember({required String id}) async {
+    final notifs = await firestoreMember
+        .doc(id)
+        .collection(notificationCollectionKey)
+        .get();
+    for (final doc in notifs.docs) {
+      await doc.reference.delete();
+    }
+    await firestoreMember.doc(id).delete();
+  }
+
   // Stockage et mise a jour d'une image
   updateImage({
     required File file,

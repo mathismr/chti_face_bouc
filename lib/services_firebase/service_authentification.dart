@@ -70,6 +70,16 @@ class ServiceAuthentification {
     return result;
   }
 
+  // Supprimer le compte Firebase Auth
+  Future<bool> deleteAccount() async {
+    try {
+      await _instance.currentUser?.delete();
+      return true;
+    } on FirebaseAuthException {
+      return false;
+    }
+  }
+
   // Recuperer l'id unique de l'utilisateur
   String? get myId => _instance.currentUser?.uid;
 
