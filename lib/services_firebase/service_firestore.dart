@@ -66,6 +66,9 @@ class ServiceFirestore {
     required Membre member,
     required String text,
     required XFile? image,
+    String? pollQuestion,
+    List<String>? pollOptions,
+    int? pollDeadlineDays,
   }) async {
     final date = DateTime.now().millisecondsSinceEpoch;
     Map<String, dynamic> map = {
@@ -75,6 +78,21 @@ class ServiceFirestore {
       textKey: text,
     };
 
+    // Sondage
+    if (pollQuestion != null && pollQuestion.isNotEmpty && pollOptions != null && pollOptions.isNotEmpty) {
+      final deadline = DateTime.now()
+          .add(Duration(days: pollDeadlineDays ?? 1))
+          .millisecondsSinceEpoch;
+      Map<String, List<String>> votes = {};
+      for (var option in pollOptions) {
+        votes[option] = [];
+      }
+      map[pollQuestionKey] = pollQuestion;
+      map[pollDeadlineKey] = deadline;
+      map[pollOptionsKey] = pollOptions;
+      map[pollVotesKey] = votes;
+    }
+
     if (image != null) {
       final url = await ServiceStorage().addImage(
         file: File(image.path),
@@ -83,10 +101,26 @@ class ServiceFirestore {
         imageName: date.toString(),
       );
       map[postImageKey] = url;
-      firestorePost.doc().set(map);
-    } else {
-      firestorePost.doc().set(map);
     }
+
+    firestorePost.doc().set(map);
+  }
+
+  // Voter sur un sondage
+  votePoll({required Post post, required String option, required String userId}) {
+    final votes = post.pollVotes;
+    // Retirer le vote precedent
+    for (var key in votes.keys) {
+      if (votes[key]!.contains(userId)) {
+        post.reference.update({
+          '$pollVotesKey.$key': FieldValue.arrayRemove([userId])
+        });
+      }
+    }
+    // Ajouter le nouveau vote
+    post.reference.update({
+      '$pollVotesKey.$option': FieldValue.arrayUnion([userId])
+    });
   }
 
   // Ajouter un "j'aime" sur le post

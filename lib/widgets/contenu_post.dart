@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../modeles/post.dart';
 import 'entete_membre.dart';
+import 'widget_sondage.dart';
 
 class ContenuPost extends StatelessWidget {
   final Post post;
@@ -29,6 +30,7 @@ class ContenuPost extends StatelessWidget {
           )
         else
           Container(),
+        if (post.hasPoll) WidgetSondage(post: post),
       ],
     );
   }

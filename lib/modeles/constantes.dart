@@ -18,6 +18,12 @@ String postImageKey = "image";
 String dateKey = "date";
 String likesKey = "likes";
 
+// Poll
+String pollQuestionKey = "pollQuestion";
+String pollDeadlineKey = "pollDeadline";
+String pollOptionsKey = "pollOptions";
+String pollVotesKey = "pollVotes";
+
 // Notif
 String fromKey = "from";
 String isReadKey = "read";
