@@ -8,7 +8,8 @@ import '../widgets/formatage_date.dart';
 class MemberHeader extends StatelessWidget {
   final String memberId;
   final int date;
-  const MemberHeader({super.key, required this.memberId, required this.date});
+  final Widget? trailing;
+  const MemberHeader({super.key, required this.memberId, required this.date, this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +37,7 @@ class MemberHeader extends StatelessWidget {
                 FormatageDate().formatted(date),
                 style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
+              if (trailing != null) trailing!,
             ],
           );
         }

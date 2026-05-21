@@ -5,14 +5,15 @@ import 'widget_sondage.dart';
 
 class ContenuPost extends StatelessWidget {
   final Post post;
-  const ContenuPost({super.key, required this.post});
+  final Widget? trailing;
+  const ContenuPost({super.key, required this.post, this.trailing});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MemberHeader(memberId: post.member, date: post.date),
+        MemberHeader(memberId: post.member, date: post.date, trailing: trailing),
         const SizedBox(height: 8),
         if (post.text.isNotEmpty)
           Padding(

@@ -123,6 +123,17 @@ class ServiceFirestore {
     });
   }
 
+  // Supprimer un post
+  deletePost({required Post post}) async {
+    // Supprimer les commentaires du post
+    final comments = await post.reference.collection(commentCollectionKey).get();
+    for (var comment in comments.docs) {
+      await comment.reference.delete();
+    }
+    // Supprimer le post
+    await post.reference.delete();
+  }
+
   // Ajouter un "j'aime" sur le post
   addLike({required String memberID, required Post post}) {
     if (post.likes.contains(memberID)) {
