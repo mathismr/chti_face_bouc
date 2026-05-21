@@ -4,14 +4,15 @@
 
 ## Fonctionnalites
 
-- **Authentification** : Inscription et connexion par email/mot de passe via Firebase Auth
+- **Authentification** : Inscription et connexion par email/mot de passe via Firebase Auth, avec messages d'erreur en francais (email invalide, compte existant, mot de passe trop faible, etc.)
 - **Fil d'actualite** : Affichage de tous les posts de la communaute, tries du plus recent au plus ancien
 - **Ecriture de posts** : Publication de textes et/ou photos (galerie ou appareil photo)
 - **Profil utilisateur** : Photo de profil, photo de couverture, description personnalisable
 - **Liste des membres** : Consultation de tous les membres du reseau et acces a leur profil
 - **Likes** : Systeme de "Vindidi !" pour aimer les posts
 - **Commentaires** : Ajout et lecture de commentaires sur chaque post
-- **Notifications** : Systeme de pseudo-notifications internes pour les interactions
+- **Notifications** : Notifications internes pour les commentaires et les likes sur vos publications
+- **Gestion de compte** : Modification du profil, deconnexion et suppression de compte (Auth + Firestore)
 
 ## Technologies
 
@@ -43,13 +44,13 @@ lib/
     page_detail_post.dart             Detail d'un post + commentaires
     page_ecrire_post.dart             Ecriture d'un nouveau post
     page_membres.dart                 Liste de tous les membres
-    page_modifier_profil.dart         Modification du profil + deconnexion
+    page_modifier_profil.dart         Modification du profil, deconnexion, suppression de compte
     page_navigation.dart              Navigation principale (5 onglets)
     page_notif.dart                   Liste des notifications
     page_profil.dart                  Profil utilisateur + ses posts
   services_firebase/                # Services d'acces a Firebase
-    service_authentification.dart     Auth (signIn, createAccount, signOut)
-    service_firestore.dart            CRUD Firestore (membres, posts, likes, ...)
+    service_authentification.dart     Auth (signIn, createAccount, signOut, deleteAccount)
+    service_firestore.dart            CRUD Firestore (membres, posts, likes, notifications, ...)
     service_storage.dart              Upload d'images vers Firebase Storage
   widgets/                          # Widgets reutilisables
     avatar.dart                       Image de profil circulaire
