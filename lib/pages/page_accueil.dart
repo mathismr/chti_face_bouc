@@ -18,6 +18,7 @@ class PageAccueil extends StatelessWidget {
           final docs = snapshot.data!.docs;
           return docs.isNotEmpty
               ? ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   itemCount: docs.length,
                   itemBuilder: (context, index) {
                     final current = docs[index];
@@ -26,7 +27,10 @@ class PageAccueil extends StatelessWidget {
                       id: current.id,
                       map: current.data() as Map<String, dynamic>,
                     );
-                    return WidgetPost(post: post);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: WidgetPost(post: post),
+                    );
                   },
                 )
               : const EmptyBody();
