@@ -3,36 +3,59 @@ import 'package:firebase_auth/firebase_auth.dart';
 class ServiceAuthentification {
   final _instance = FirebaseAuth.instance;
 
+  static String _errorMessage(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return "L'adresse mail n'est pas valide.";
+      case 'user-disabled':
+        return "Ce compte a été désactivé.";
+      case 'user-not-found':
+        return "Aucun compte trouvé avec cette adresse mail.";
+      case 'wrong-password':
+        return "Mot de passe incorrect.";
+      case 'invalid-credential':
+        return "Adresse mail ou mot de passe incorrect.";
+      case 'email-already-in-use':
+        return "Un compte existe déjà avec cette adresse mail.";
+      case 'weak-password':
+        return "Le mot de passe est trop faible (6 caractères minimum).";
+      case 'operation-not-allowed':
+        return "Cette opération n'est pas autorisée.";
+      case 'too-many-requests':
+        return "Trop de tentatives. Veuillez réessayer plus tard.";
+      case 'network-request-failed':
+        return "Erreur réseau. Vérifiez votre connexion internet.";
+      default:
+        return "Erreur inconnue ($code).";
+    }
+  }
+
   // Connecter a Firebase
-  Future<String?> signIn(
+  Future<String> signIn(
       {required String email, required String password}) async {
-    String result = "";
     try {
       await _instance.signInWithEmailAndPassword(
           email: email, password: password);
-      result = "OK";
+      return "OK";
     } on FirebaseAuthException catch (e) {
-      result = e.message ?? "Erreur inconnue";
+      return _errorMessage(e.code);
     }
-    return result;
   }
 
   // Creer un compte sur Firebase
-  Future<String?> createAccount({
+  Future<String> createAccount({
     required String email,
     required String password,
     required String surname,
     required String name,
   }) async {
-    String result = "";
     try {
       final credential = await _instance.createUserWithEmailAndPassword(
           email: email, password: password);
-      result = credential.user?.uid ?? "";
+      return credential.user?.uid ?? "";
     } on FirebaseAuthException catch (e) {
-      result = e.message ?? "Erreur inconnue";
+      return _errorMessage(e.code);
     }
-    return result;
   }
 
   // Deconnecter de Firebase

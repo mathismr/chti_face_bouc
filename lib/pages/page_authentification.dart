@@ -38,12 +38,33 @@ class _PageAuthentificationState extends State<PageAuthentification> {
     });
   }
 
+  String? _errorMessage;
+
+  _showError(String message) {
+    setState(() {
+      _errorMessage = message;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
   _handleAuth() async {
+    setState(() {
+      _errorMessage = null;
+    });
+
     if (accountExists) {
-      await ServiceAuthentification().signIn(
+      final result = await ServiceAuthentification().signIn(
         email: mailController.text.trim(),
         password: passwordController.text.trim(),
       );
+      if (result != "OK") {
+        _showError(result);
+      }
     } else {
       final result = await ServiceAuthentification().createAccount(
         email: mailController.text.trim(),
@@ -51,7 +72,10 @@ class _PageAuthentificationState extends State<PageAuthentification> {
         surname: surnameController.text.trim(),
         name: nameController.text.trim(),
       );
-      if (result != null && result.isNotEmpty && result != "Erreur inconnue") {
+      final isError = result.isEmpty || result.contains(' ');
+      if (isError) {
+        _showError(result.isEmpty ? "Une erreur est survenue." : result);
+      } else {
         ServiceFirestore().addMember(
           id: result,
           data: {
