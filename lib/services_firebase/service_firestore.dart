@@ -99,6 +99,14 @@ class ServiceFirestore {
       post.reference.update({
         likesKey: FieldValue.arrayUnion([memberID])
       });
+      // Notifier l'auteur du post (sauf si c'est lui-même)
+      if (post.member != memberID) {
+        sendNotification(
+          to: post.member,
+          text: "a aimé votre publication",
+          postID: post.id,
+        );
+      }
     }
   }
 
