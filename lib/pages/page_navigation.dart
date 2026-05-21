@@ -79,7 +79,7 @@ class _PageNavigationState extends State<PageNavigation> {
                       ),
                       NavigationDestination(
                         icon: Icon(Icons.notifications),
-                        label: "Notifications",
+                        label: "Notifs",
                       ),
                       NavigationDestination(
                         icon: Icon(Icons.person),
