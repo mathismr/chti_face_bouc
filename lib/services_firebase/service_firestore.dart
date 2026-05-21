@@ -66,6 +66,7 @@ class ServiceFirestore {
     required Membre member,
     required String text,
     required XFile? image,
+    String? gifUrl,
     String? pollQuestion,
     List<String>? pollOptions,
     int? pollDeadlineDays,
@@ -91,6 +92,10 @@ class ServiceFirestore {
       map[pollDeadlineKey] = deadline;
       map[pollOptionsKey] = pollOptions;
       map[pollVotesKey] = votes;
+    }
+
+    if (gifUrl != null && gifUrl.isNotEmpty) {
+      map[gifUrlKey] = gifUrl;
     }
 
     if (image != null) {
@@ -148,7 +153,7 @@ class ServiceFirestore {
   }
 
   // Ajouter un commentaire sur un post
-  addComment({required Post post, required String text}) {
+  addComment({required Post post, required String text, String? gifUrl}) {
     final memberId = ServiceAuthentification().myId;
     if (memberId == null) return;
     Map<String, dynamic> map = {
@@ -156,6 +161,9 @@ class ServiceFirestore {
       dateKey: DateTime.now().millisecondsSinceEpoch,
       textKey: text,
     };
+    if (gifUrl != null && gifUrl.isNotEmpty) {
+      map[gifUrlKey] = gifUrl;
+    }
     post.reference.collection(commentCollectionKey).doc().set(map);
   }
 
@@ -194,6 +202,69 @@ class ServiceFirestore {
         .doc(id)
         .collection(notificationCollectionKey)
         .orderBy(dateKey, descending: true)
+        .snapshots();
+  }
+
+  // --- Conversations & Messages ---
+
+  final firestoreConversation = instance.collection(conversationCollectionKey);
+
+  // Recuperer ou creer une conversation entre deux membres
+  Future<DocumentReference> getOrCreateConversation(
+      String memberId1, String memberId2) async {
+    final participants = [memberId1, memberId2]..sort();
+    final query = await firestoreConversation
+        .where(participantsKey, isEqualTo: participants)
+        .limit(1)
+        .get();
+    if (query.docs.isNotEmpty) {
+      return query.docs.first.reference;
+    }
+    final doc = firestoreConversation.doc();
+    await doc.set({
+      participantsKey: participants,
+      lastMessageKey: "",
+      lastMessageDateKey: 0,
+    });
+    return doc;
+  }
+
+  // Lire les conversations d'un membre
+  Stream<QuerySnapshot> conversationsForMember(String memberId) {
+    return firestoreConversation
+        .where(participantsKey, arrayContains: memberId)
+        .orderBy(lastMessageDateKey, descending: true)
+        .snapshots();
+  }
+
+  // Envoyer un message dans une conversation
+  sendMessage({
+    required DocumentReference conversationRef,
+    required String senderId,
+    required String text,
+    String? gifUrl,
+  }) {
+    final date = DateTime.now().millisecondsSinceEpoch;
+    final Map<String, dynamic> messageData = {
+      senderIdKey: senderId,
+      textKey: text,
+      dateKey: date,
+    };
+    if (gifUrl != null && gifUrl.isNotEmpty) {
+      messageData[gifUrlKey] = gifUrl;
+    }
+    conversationRef.collection(messageCollectionKey).doc().set(messageData);
+    conversationRef.update({
+      lastMessageKey: text.isNotEmpty ? text : '🎬 GIF',
+      lastMessageDateKey: date,
+    });
+  }
+
+  // Lire les messages d'une conversation
+  Stream<QuerySnapshot> messagesForConversation(DocumentReference conversationRef) {
+    return conversationRef
+        .collection(messageCollectionKey)
+        .orderBy(dateKey, descending: false)
         .snapshots();
   }
 }

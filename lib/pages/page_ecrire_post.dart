@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../modeles/membre.dart';
 import '../services_firebase/service_firestore.dart';
+import '../widgets/gif_picker.dart';
 
 class PageEcrirePost extends StatefulWidget {
   final Membre member;
@@ -17,6 +18,7 @@ class PageEcrirePost extends StatefulWidget {
 class _PageEcrirePostState extends State<PageEcrirePost> {
   final TextEditingController textController = TextEditingController();
   XFile? xFile;
+  String? _gifUrl;
 
   // Sondage
   bool _showPoll = false;
@@ -43,13 +45,14 @@ class _PageEcrirePostState extends State<PageEcrirePost> {
 
     final hasText = textController.text.isNotEmpty;
     final hasImage = xFile != null;
+    final hasGif = _gifUrl != null;
     final hasPoll = _showPoll &&
         _pollQuestionController.text.isNotEmpty &&
         _optionControllers
             .where((c) => c.text.isNotEmpty)
             .length >= 2;
 
-    if (!hasText && !hasImage && !hasPoll) return;
+    if (!hasText && !hasImage && !hasGif && !hasPoll) return;
 
     final pollOptions = _showPoll
         ? _optionControllers
@@ -62,6 +65,7 @@ class _PageEcrirePostState extends State<PageEcrirePost> {
       member: widget.member,
       text: textController.text,
       image: xFile,
+      gifUrl: _gifUrl,
       pollQuestion: _showPoll ? _pollQuestionController.text.trim() : null,
       pollOptions: pollOptions,
       pollDeadlineDays: _showPoll ? _pollDays : null,
@@ -140,6 +144,24 @@ class _PageEcrirePostState extends State<PageEcrirePost> {
                       ),
                       const SizedBox(width: 16),
                       IconButton(
+                        onPressed: () async {
+                          final url = await GifPicker.show(context);
+                          if (url != null) {
+                            setState(() {
+                              _gifUrl = url;
+                            });
+                          }
+                        },
+                        icon: Icon(
+                          Icons.gif_box,
+                          size: 32,
+                          color: _gifUrl != null
+                              ? Theme.of(context).colorScheme.primary
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      IconButton(
                         onPressed: () {
                           setState(() {
                             _showPoll = !_showPoll;
@@ -163,6 +185,26 @@ class _PageEcrirePostState extends State<PageEcrirePost> {
             Padding(
               padding: const EdgeInsets.all(8),
               child: Image.file(File(xFile!.path)),
+            ),
+          if (_gifUrl != null)
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(_gifUrl!),
+                  ),
+                  IconButton(
+                    onPressed: () => setState(() => _gifUrl = null),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
             ),
           // Sondage
           if (_showPoll)

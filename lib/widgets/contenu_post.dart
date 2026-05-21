@@ -31,6 +31,18 @@ class ContenuPost extends StatelessWidget {
           )
         else
           Container(),
+        if (post.gifUrl.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                post.gifUrl,
+                width: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         if (post.hasPoll) WidgetSondage(post: post),
       ],
     );

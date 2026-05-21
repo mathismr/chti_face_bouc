@@ -5,7 +5,7 @@ import '../services_firebase/service_authentification.dart';
 import '../services_firebase/service_firestore.dart';
 import '../widgets/widget_vide.dart';
 import 'page_accueil.dart';
-import 'page_membres.dart';
+import 'page_conversations.dart';
 import 'page_ecrire_post.dart';
 import 'page_notif.dart';
 import 'page_profil.dart';
@@ -39,7 +39,7 @@ class _PageNavigationState extends State<PageNavigation> {
                 );
                 List<Widget> bodies = [
                   const PageAccueil(),
-                  const PageMembres(),
+                  const PageConversations(),
                   PageEcrirePost(
                     member: member,
                     newSelection: (newIndex) {
@@ -70,8 +70,8 @@ class _PageNavigationState extends State<PageNavigation> {
                         label: "Accueil",
                       ),
                       NavigationDestination(
-                        icon: Icon(Icons.group),
-                        label: "Membres",
+                        icon: Icon(Icons.chat),
+                        label: "Messages",
                       ),
                       NavigationDestination(
                         icon: Icon(Icons.border_color),

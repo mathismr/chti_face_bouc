@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../modeles/post.dart';
 import '../services_firebase/service_firestore.dart';
+import '../widgets/gif_picker.dart';
 import '../widgets/widget_post.dart';
 import '../widgets/liste_commentaire.dart';
 
@@ -15,6 +16,7 @@ class PageDetailPost extends StatefulWidget {
 class _PageDetailPostState extends State<PageDetailPost> {
   final TextEditingController commentController =
       TextEditingController();
+  String? _commentGifUrl;
 
   @override
   void initState() {
@@ -28,17 +30,19 @@ class _PageDetailPostState extends State<PageDetailPost> {
   }
 
   _addComment() {
-    if (commentController.text.isEmpty) return;
+    if (commentController.text.isEmpty && _commentGifUrl == null) return;
     ServiceFirestore().addComment(
       post: widget.post,
       text: commentController.text,
+      gifUrl: _commentGifUrl,
     );
     ServiceFirestore().sendNotification(
       to: widget.post.member,
-      text: commentController.text,
+      text: commentController.text.isNotEmpty ? commentController.text : '🎬 GIF',
       postID: widget.post.id,
     );
     commentController.clear();
+    setState(() => _commentGifUrl = null);
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
@@ -52,10 +56,43 @@ class _PageDetailPostState extends State<PageDetailPost> {
         child: Column(
           children: [
             WidgetPost(post: widget.post),
+            if (_commentGifUrl != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(_commentGifUrl!, height: 120),
+                    ),
+                    GestureDetector(
+                      onTap: () => setState(() => _commentGifUrl = null),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.black54,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(4),
+                        child: const Icon(Icons.close, size: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
+                  IconButton(
+                    onPressed: () async {
+                      final url = await GifPicker.show(context);
+                      if (url != null) {
+                        setState(() => _commentGifUrl = url);
+                      }
+                    },
+                    icon: const Icon(Icons.gif_box),
+                  ),
                   Expanded(
                     child: TextField(
                       controller: commentController,

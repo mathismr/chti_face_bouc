@@ -28,3 +28,14 @@ String pollVotesKey = "pollVotes";
 String fromKey = "from";
 String isReadKey = "read";
 String postIdKey = "postID";
+
+// GIF
+String gifUrlKey = "gifUrl";
+
+// Conversations & Messages
+String conversationCollectionKey = "conversations";
+String messageCollectionKey = "messages";
+String participantsKey = "participants";
+String lastMessageKey = "lastMessage";
+String lastMessageDateKey = "lastMessageDate";
+String senderIdKey = "senderID";

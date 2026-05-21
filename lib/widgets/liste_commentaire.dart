@@ -34,7 +34,25 @@ class ListeCommentaire extends StatelessWidget {
                         memberId: commentaire.member,
                         date: commentaire.date,
                       ),
-                      subtitle: Text(commentaire.text),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (commentaire.text.isNotEmpty)
+                            Text(commentaire.text),
+                          if (commentaire.gifUrl.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  commentaire.gifUrl,
+                                  width: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     );
                   },
                 )
